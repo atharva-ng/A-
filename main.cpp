@@ -143,6 +143,7 @@ public:
         person(ind_cordi starti, ind_cordi endi)
             : start(starti), end(endi), curr(starti)
         {
+                route.setCoordinates(start.x, start.y);
         }
 };
 
@@ -165,17 +166,16 @@ int main()
 
         person p1(start, end);
 
-        ind_cordi curr(2, 4); // give coordinates of start
-
-        // while (p1.curr.x != end.x && p1.curr.y != end.y)
+        while ((p1.curr.x != end.x) && (p1.curr.y != end.y))
         {
                 coordinates emptyBlocks;
                 ind_cordi next(0, 0);
-                Neighbour(emptyBlocks, grid, curr.x, curr.y);
+                Neighbour(emptyBlocks, grid, p1.curr.x, p1.curr.y);
                 for (int i{}; i < emptyBlocks.length; i++)
                 {
                         cout << emptyBlocks.x.at(i) << " " << emptyBlocks.y.at(i) << endl;
                 }
+                cout << "=============================================" << endl;
                 vector<float> f;
                 for (int i{}; i < emptyBlocks.length; i++)
                 {
@@ -184,12 +184,25 @@ int main()
 
                         next.x = emptyBlocks.x.at(i);
                         next.y = emptyBlocks.y.at(i);
-                        f.push_back(findG(curr, next) + findH(curr, end));
+                        f.push_back((findG(p1.curr, next) + findH(next, end)));
                 }
                 for (auto k : f)
                 {
                         cout << k << endl;
                 }
+                cout << "=============================================" << endl;
+                int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
+
+                p1.curr.x = emptyBlocks.x.at(minElementIndex);
+                p1.curr.y = emptyBlocks.y.at(minElementIndex);
+                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+        }
+        cout << "=============================================" << endl;
+        cout << "=============================================" << endl;
+        cout << "=============================================" << endl;
+        for (int i{}; i < p1.route.length; i++)
+        {
+                cout << p1.route.x.at(i) << " " << p1.route.y.at(i) << endl;
         }
 
         return 0;
