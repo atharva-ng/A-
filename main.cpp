@@ -16,10 +16,20 @@ public:
 
 class coordinates
 {
+
 public:
         vector<int> x;
         vector<int> y;
         int length{};
+        coordinates()
+        {
+        }
+
+        coordinates(int x, int y)
+            : x(x), y(y)
+        {
+        }
+
         void setCoordinates(int x1, int y1)
         {
                 x.push_back(x1);
@@ -74,12 +84,12 @@ void setGrid(vector<vector<int>> &grid)
 
 float findG(ind_cordi curr, ind_cordi next)
 {
-        return sqrt(pow((curr.x - next.x), 2) + pow((curr.y - next.y), 2));
+        return sqrt(static_cast<float>(pow((curr.x - next.x), 2) + pow((curr.y - next.y), 2)));
 }
 
 float findH(ind_cordi curr, ind_cordi last)
 {
-        return sqrt(pow((curr.x - last.x), 2) + pow((curr.y - last.y), 2));
+        return sqrt(static_cast<float>(pow((curr.x - last.x), 2) + pow((curr.y - last.y), 2)));
 }
 
 int Neighbour(coordinates &emptyBlocks, vector<vector<int>> &grid, int x, int y)
@@ -121,6 +131,21 @@ int Neighbour(coordinates &emptyBlocks, vector<vector<int>> &grid, int x, int y)
         return 0;
 }
 
+class person
+{
+public:
+        ind_cordi start;
+        ind_cordi end;
+        ind_cordi curr;
+
+        coordinates route;
+
+        person(ind_cordi starti, ind_cordi endi)
+            : start(starti), end(endi), curr(starti)
+        {
+        }
+};
+
 int main()
 {
         vector<vector<int>> grid{
@@ -131,32 +156,41 @@ int main()
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
-
         setGrid(grid);
 
         // cout << grid.at(2).at(4) << endl;
 
-        ind_cordi start(1, 8);
+        ind_cordi start(2, 4);
         ind_cordi end(1, 1);
 
-        ind_cordi curr(1, 8);
-        ind_cordi next(1, 2);
+        person p1(start, end);
 
-        coordinates emptyBlocks;
-        emptyBlocks.setCoordinates(curr.x, curr.y);
+        ind_cordi curr(2, 4); // give coordinates of start
 
-        Neighbour(emptyBlocks, grid, curr.x, curr.y);
-
-        for (int i{}; i < emptyBlocks.length; i++)
+        // while (p1.curr.x != end.x && p1.curr.y != end.y)
         {
-                cout << emptyBlocks.x.at(i) << " " << emptyBlocks.y.at(i) << endl;
+                coordinates emptyBlocks;
+                ind_cordi next(0, 0);
+                Neighbour(emptyBlocks, grid, curr.x, curr.y);
+                for (int i{}; i < emptyBlocks.length; i++)
+                {
+                        cout << emptyBlocks.x.at(i) << " " << emptyBlocks.y.at(i) << endl;
+                }
+                vector<float> f;
+                for (int i{}; i < emptyBlocks.length; i++)
+                {
+                        // int h{}; // next block to last block
+                        // int g{}; // this block to next block
+
+                        next.x = emptyBlocks.x.at(i);
+                        next.y = emptyBlocks.y.at(i);
+                        f.push_back(findG(curr, next) + findH(curr, end));
+                }
+                for (auto k : f)
+                {
+                        cout << k << endl;
+                }
         }
-
-        // // int h{}; // next block to last block
-        // // int g{}; // this block to next block
-        // int f{};
-
-        // f = findG(curr, next) + findH(curr, end);
 
         return 0;
 }
