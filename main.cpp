@@ -165,9 +165,13 @@ int main()
         ind_cordi end(1, 1);
 
         person p1(start, end);
-
-        while ((p1.curr.x != end.x) && (p1.curr.y != end.y))
+        // cout<<(1==2)<<"  "<<(1==1)<<(1!=2)<<(1!=1)<<endl;
+        // while (((p1.curr.x == end.x) && (p1.curr.y == end.y)) == 0)
+        int lmn{};
+        while (lmn != 10)
         {
+                lmn++;
+                cout << (p1.curr.x != end.x) << "======" << (p1.curr.y == end.y) << ((p1.curr.x == end.x) && (p1.curr.y != end.y)) << endl;
                 coordinates emptyBlocks;
                 ind_cordi next(0, 0);
                 Neighbour(emptyBlocks, grid, p1.curr.x, p1.curr.y);
@@ -179,12 +183,9 @@ int main()
                 vector<float> f;
                 for (int i{}; i < emptyBlocks.length; i++)
                 {
-                        // int h{}; // next block to last block
-                        // int g{}; // this block to next block
-
                         next.x = emptyBlocks.x.at(i);
                         next.y = emptyBlocks.y.at(i);
-                        f.push_back((findG(p1.curr, next) + findH(next, end)));
+                        f.push_back((findG(p1.curr, next) + findH(next, end))); // H: next block to last block|| G:this block to next block
                 }
                 for (auto k : f)
                 {
