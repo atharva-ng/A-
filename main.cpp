@@ -36,6 +36,14 @@ public:
                 y.push_back(y1);
                 length++;
         }
+        void print()
+        {
+                for (int i{}; i < length; i++)
+                {
+                        cout << x.at(i) << " " << y.at(i) << endl;
+                }
+                cout << "=============================================" << endl;
+        }
 };
 
 void setGrid(vector<vector<int>> &grid)
@@ -90,6 +98,11 @@ float findG(ind_cordi curr, ind_cordi next)
 float findH(ind_cordi curr, ind_cordi last)
 {
         return sqrt(static_cast<float>(pow((curr.x - last.x), 2) + pow((curr.y - last.y), 2)));
+}
+
+float findF(ind_cordi curr, ind_cordi next, ind_cordi end)
+{
+        return (findG(curr, next) + findH(next, end));
 }
 
 int Neighbour(coordinates &emptyBlocks, vector<vector<int>> &grid, int x, int y)
@@ -159,52 +172,72 @@ int main()
         };
         setGrid(grid);
 
-        // cout << grid.at(2).at(4) << endl;
-
-        ind_cordi start(2, 4);
+        ind_cordi start(1, 8);
         ind_cordi end(1, 1);
 
         person p1(start, end);
-        // cout<<(1==2)<<"  "<<(1==1)<<(1!=2)<<(1!=1)<<endl;
-        // while (((p1.curr.x == end.x) && (p1.curr.y == end.y)) == 0)
-        int lmn{};
-        while (lmn != 10)
+        while (((p1.curr.x == end.x) && (p1.curr.y == end.y)) == 0)
         {
-                lmn++;
-                cout << (p1.curr.x != end.x) << "======" << (p1.curr.y == end.y) << ((p1.curr.x == end.x) && (p1.curr.y != end.y)) << endl;
+
                 coordinates emptyBlocks;
                 ind_cordi next(0, 0);
+
+                // Finding empty blocks
+
                 Neighbour(emptyBlocks, grid, p1.curr.x, p1.curr.y);
-                for (int i{}; i < emptyBlocks.length; i++)
-                {
-                        cout << emptyBlocks.x.at(i) << " " << emptyBlocks.y.at(i) << endl;
-                }
-                cout << "=============================================" << endl;
+
+                // Analysing Empty blocks
+
                 vector<float> f;
                 for (int i{}; i < emptyBlocks.length; i++)
                 {
                         next.x = emptyBlocks.x.at(i);
                         next.y = emptyBlocks.y.at(i);
-                        f.push_back((findG(p1.curr, next) + findH(next, end))); // H: next block to last block|| G:this block to next block
+                        f.push_back(findF(p1.curr, next, end)); // H: next block to last block|| G:this block to next block
                 }
-                for (auto k : f)
-                {
-                        cout << k << endl;
-                }
-                cout << "=============================================" << endl;
-                int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
 
-                p1.curr.x = emptyBlocks.x.at(minElementIndex);
-                p1.curr.y = emptyBlocks.y.at(minElementIndex);
-                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+                // Finding the next element
+
+                int flag{};
+                while (flag == 0)
+                {
+                        int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
+                        if (p1.route.length == 1)
+                        {
+                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
+                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
+                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+                                flag++;
+                        }
+                        else if (!(((p1.route.x.at(p1.route.length - 2)) == (emptyBlocks.x.at(minElementIndex))) && ((p1.route.y.at(p1.route.length - 2)) == (emptyBlocks.y.at(minElementIndex)))))
+                        {
+                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
+                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
+                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+                                flag++;
+                        }
+                        else
+                        {
+                                emptyBlocks.x.at(minElementIndex) = 999999;
+                                emptyBlocks.y.at(minElementIndex) = 999999;
+                                f.clear();
+                                for (int i{}; i < emptyBlocks.length; i++)
+                                {
+                                        next.x = emptyBlocks.x.at(i);
+                                        next.y = emptyBlocks.y.at(i);
+                                        f.push_back((findG(p1.curr, next) + findH(next, end))); // H: next block to last block|| G:this block to next block
+                                }
+                                int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
+                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
+                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
+                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+                                flag++;
+                        }
+                }
         }
+
         cout << "=============================================" << endl;
-        cout << "=============================================" << endl;
-        cout << "=============================================" << endl;
-        for (int i{}; i < p1.route.length; i++)
-        {
-                cout << p1.route.x.at(i) << " " << p1.route.y.at(i) << endl;
-        }
+        p1.route.print();
 
         return 0;
 }
