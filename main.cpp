@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <cmath>
 
 using namespace std;
@@ -50,7 +51,7 @@ void setGrid(vector<vector<int>> &grid)
 {
         grid.at(1).at(1) = 1;
         grid.at(1).at(2) = 1;
-        grid.at(1).at(3) = 0;
+        grid.at(1).at(3) = 1;
         grid.at(1).at(4) = 1;
         grid.at(1).at(5) = 1;
         grid.at(1).at(6) = 1;
@@ -172,7 +173,7 @@ int main()
         };
         setGrid(grid);
 
-        ind_cordi start(1, 8);
+        ind_cordi start(5, 8);
         ind_cordi end(1, 1);
 
         person p1(start, end);
@@ -198,41 +199,28 @@ int main()
 
                 // Finding the next element
 
-                int flag{};
-                while (flag == 0)
+                int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
+                vector<int>::iterator itX;
+                vector<int>::iterator itY;
+                itX = find(p1.route.x.begin(), p1.route.x.end(), emptyBlocks.x.at(minElementIndex));
+                itY = find(p1.route.y.begin(), p1.route.y.end(), emptyBlocks.y.at(minElementIndex));
+                if (*itX == 0)
                 {
-                        int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
-                        if (p1.route.length == 1)
-                        {
-                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
-                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
-                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
-                                flag++;
-                        }
-                        else if (!(((p1.route.x.at(p1.route.length - 2)) == (emptyBlocks.x.at(minElementIndex))) && ((p1.route.y.at(p1.route.length - 2)) == (emptyBlocks.y.at(minElementIndex)))))
-                        {
-                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
-                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
-                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
-                                flag++;
-                        }
-                        else
-                        {
-                                emptyBlocks.x.at(minElementIndex) = 999999;
-                                emptyBlocks.y.at(minElementIndex) = 999999;
-                                f.clear();
-                                for (int i{}; i < emptyBlocks.length; i++)
-                                {
-                                        next.x = emptyBlocks.x.at(i);
-                                        next.y = emptyBlocks.y.at(i);
-                                        f.push_back((findG(p1.curr, next) + findH(next, end))); // H: next block to last block|| G:this block to next block
-                                }
-                                int minElementIndex = min_element(f.begin(), f.end()) - f.begin();
-                                p1.curr.x = emptyBlocks.x.at(minElementIndex);
-                                p1.curr.y = emptyBlocks.y.at(minElementIndex);
-                                p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
-                                flag++;
-                        }
+                        *itX = 9999;
+                }
+                if (*itY == 0)
+                {
+                        *itY = 9999;
+                }
+                if (((*itX == *p1.route.x.end()) && (*itY == *p1.route.y.end())))
+                {
+                        p1.curr.x = emptyBlocks.x.at(minElementIndex);
+                        p1.curr.y = emptyBlocks.y.at(minElementIndex);
+                        p1.route.setCoordinates(emptyBlocks.x.at(minElementIndex), emptyBlocks.y.at(minElementIndex));
+                }
+                else
+                {
+                        cout << "Present  " << ((itX == p1.route.x.end()) && (itY == p1.route.y.end())) << endl;
                 }
         }
 
